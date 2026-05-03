@@ -1,0 +1,62 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    container_name: notification-app
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    depends_on:
+      - redis
+      - db
+    networks:
+      - appnet
+    ports:
+      - "8000:8000"
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    container_name: notification-worker
+    working_dir: /var/www
+    command: php artisan queue:work redis --queue=high,normal,low --sleep=1 --tries=3
+    volumes:
+      - .:/var/www
+    depends_on:
+      - redis
+      - db
+      - app
+    networks:
+      - appnet
+
+  db:
+    image: mysql:8.0
+    container_name: notification-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: notifications
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - appnet
+
+  redis:
+    image: redis:7
+    container_name: notification-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - appnet
+
+volumes:
+  dbdata:
+
+networks:
+  appnet:
