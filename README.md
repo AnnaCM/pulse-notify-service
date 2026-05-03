@@ -253,4 +253,4 @@ This project was designed with:
 
 ## License
 
-This project is licensed under the terms of the [MIT license](LICENSE).
+This project is licensed under the terms of the [MIT license](LICENSE.md).
