@@ -100,6 +100,7 @@ cd pulse-notify-service
 ```
 
 ### 2. Start Docker
+
 ```bash
 docker-compose up -d --build
 ```
@@ -112,6 +113,7 @@ This will start:
 - Queue worker
 
 ### 3. Install dependencies (if required)
+
 ```bash
 docker-compose exec app composer install
 ```
@@ -119,6 +121,7 @@ docker-compose exec app composer install
 ## Configuration
 
 ### 1. Create environment file
+
 ```bash
 cp .env.example .env
 ```
@@ -136,15 +139,34 @@ Steps:
 WEBHOOK_URL=https://webhook.site/your-unique-url
 ```
 
-This allows inspection of outgoing notification requests.
+
+### 3. Configure Mock Response
+
+In webhook.site, configure a custom response with:
+
+- Status code: `202`
+- Response body:
+
+```json
+{
+  "messageId": "uuid-here",
+  "status": "accepted",
+  "timestamp": "ISO8601"
+}
+```
+
+This allows inspection of outgoing notification requests while simulating a successful external provider response.
 
 ## Running the Project
+
 ### 1. Generate application key
+
 ```bash
 docker-compose exec app php artisan key:generate
 ```
 
 ### 2. Run migrations
+
 ```bash
 docker-compose exec app php artisan migrate
 ```
@@ -155,6 +177,7 @@ docker-compose exec app php artisan migrate:fresh
 ```
 
 ### 3. Start the application
+
 ```bash
 docker-compose exec app php artisan serve --host=0.0.0.0 --port=8000
 ```
@@ -226,6 +249,7 @@ Example:
 - Invalid query parameters
 
 ### Error Response Format
+
 All error responses follow a consistent JSON structure:
 
 ```json
